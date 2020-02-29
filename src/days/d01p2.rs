@@ -14,15 +14,10 @@ fn fuel_req(weight: i32) -> i32 {
 }
 
 fn fuel_req_chained(weight: i32) -> i32 {
-    let mut total_req = 0;
-    let mut current = fuel_req(weight);
+    let start = Some(fuel_req(weight)).filter(|fuel| *fuel > 0);
+    let chain = std::iter::successors(start, |val| Some(fuel_req(*val)));
 
-    while current > 0 {
-        total_req += current;
-        current = fuel_req(current);
-    }
-
-    total_req
+    chain.take_while(|req| *req > 0).sum()
 }
 
 fn main() -> std::io::Result<()> {
