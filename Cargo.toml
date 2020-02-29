@@ -10,5 +10,13 @@ edition = "2018"
 name = "utils"
 path = "src/utils/lib.rs"
 
+[[bin]]
+name = "d01p1"
+path = "src/days/d01p1.rs"
+
+[[bin]]
+name = "d01p2"
+path = "src/days/d01p2.rs"
+
 [dependencies]
 clap = "2.33.0"
