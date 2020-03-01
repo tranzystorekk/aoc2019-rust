@@ -18,5 +18,14 @@ path = "src/days/d01p1.rs"
 name = "d01p2"
 path = "src/days/d01p2.rs"
 
+[[bin]]
+name = "d04p1"
+path = "src/days/d04p1.rs"
+
+[[bin]]
+name = "d04p2"
+path = "src/days/d04p2.rs"
+
 [dependencies]
 clap = "2.33.0"
+itertools = "0.8.2"
