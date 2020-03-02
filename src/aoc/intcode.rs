@@ -8,6 +8,7 @@ pub struct Machine<I, O> {
     jump_flag: Option<usize>,
     halted: bool,
     running: bool,
+    last_output: Option<i64>,
     input: I,
     output: O,
 }
@@ -68,6 +69,7 @@ impl<I, O> Machine<I, O> where
             jump_flag: None,
             halted: false,
             running: false,
+            last_output: None,
             input,
             output,
         }
@@ -79,6 +81,10 @@ impl<I, O> Machine<I, O> where
 
     pub fn write(&mut self, position: usize, value: i64) {
         self.memory[position] = value;
+    }
+
+    pub fn last_output(&self) -> Option<i64> {
+        self.last_output
     }
 
     pub fn is_halted(&self) -> bool {
@@ -221,6 +227,7 @@ impl<I, O> Machine<I, O> where
             let output_value = self.get_value_from_mode(mode, value);
 
             (self.output)(output_value);
+            self.last_output = Some(output_value);
         } else {
             panic!("Error: invalid arguments for output operation");
         }
