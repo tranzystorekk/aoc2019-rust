@@ -217,7 +217,7 @@ impl<I, O> Machine<I, O> where
             let input_value = (self.input)();
             self.try_write_or_resize(addr, input_value);
         } else {
-            panic!("Error: invalid argumetns for input operation");
+            panic!("Error: invalid arguments for input operation");
         }
     }
 
