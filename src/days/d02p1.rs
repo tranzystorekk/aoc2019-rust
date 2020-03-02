@@ -1,7 +1,7 @@
 use std::io::{BufRead, Error, ErrorKind};
 
 use aoc::intcode::Machine;
-use aoc::utils::args::BufferedInput;
+use aoc::utils::BufferedInput;
 
 fn parse_input() -> std::io::Result<Vec<i64>> {
     let input = BufferedInput::parse_args("Day 2: 1202 Program Alarm - Part 1")?;

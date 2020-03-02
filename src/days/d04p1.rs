@@ -1,5 +1,5 @@
 use std::io::{BufRead, Error, ErrorKind};
-use aoc::utils::args::BufferedInput;
+use aoc::utils::BufferedInput;
 
 use itertools::Itertools;
 
