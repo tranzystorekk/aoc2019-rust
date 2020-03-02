@@ -182,7 +182,7 @@ impl<I, O> Machine<I, O> where
             let cond = self.get_value_from_mode(mode_cond, value_cond);
 
             let (mode_addr, value_addr) = arg_addr;
-            let addr = self.get_address_from_mode(mode_addr, value_addr);
+            let addr = self.get_value_from_mode(mode_addr, value_addr) as usize;
 
             if op(cond) {
                 self.jump_flag = Some(addr);
