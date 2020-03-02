@@ -7,8 +7,8 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [lib]
-name = "utils"
-path = "src/utils/lib.rs"
+name = "aoc"
+path = "src/aoc/lib.rs"
 
 [[bin]]
 name = "d01p1"

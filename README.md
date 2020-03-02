@@ -22,7 +22,7 @@ To run a specific solution, execute the following:
 
 `cargo run --bin <SOLUTION_NAME> [<INPUT_FILE>]`
 
-## [utils](src/utils) library
+## [utils](src/aoc/utils) library
 
 Although Rust tries to combine succinctness and efficiency,
 it is in many aspects not as expressive as Python.

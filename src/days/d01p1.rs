@@ -1,5 +1,5 @@
 use std::io::BufRead;
-use utils::args::BufferedInput;
+use aoc::utils::args::BufferedInput;
 
 fn parse_input() -> std::io::Result<Vec<i32>> {
     let input = BufferedInput::parse_args("Day 1: The Tyranny of the Rocket Equation - Part 1")?;

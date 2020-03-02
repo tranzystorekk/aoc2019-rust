@@ -1,6 +1,6 @@
 use std::io::{BufRead, Read};
 
-use crate::bufwrap::{FileReader, StdinReader};
+use crate::utils::bufwrap::{FileReader, StdinReader};
 
 use clap::{App, Arg};
 
