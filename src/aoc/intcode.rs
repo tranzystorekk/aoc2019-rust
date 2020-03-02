@@ -118,10 +118,9 @@ impl<I, O> Machine<I, O> where
         let (opcode, args) = self.parse_instruction();
         self.exec(opcode, args);
 
-        if let Some(jump_address) = self.jump_flag.take() {
-            self.program_counter = jump_address;
-        } else {
-            self.program_counter += args.len() + 1;
+        match self.jump_flag.take() {
+            Some(jump_address) => self.program_counter = jump_address,
+            _ => self.program_counter += args.len() + 1
         }
     }
 
