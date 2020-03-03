@@ -1,7 +1,11 @@
+pub mod io;
+
 use itertools::Itertools;
 
+pub use io::{IoProvider, ValueProvider};
+
 #[derive(Debug)]
-pub struct Machine<I, O> {
+pub struct Machine<'a, T> {
     memory: Vec<i64>,
     program_counter: usize,
     relative_base: i64,
@@ -9,8 +13,7 @@ pub struct Machine<I, O> {
     halted: bool,
     running: bool,
     last_output: Option<i64>,
-    input: I,
-    output: O,
+    io_provider: &'a mut T
 }
 
 #[derive(Copy, Clone)]
@@ -58,11 +61,9 @@ impl Args {
     }
 }
 
-impl<I, O> Machine<I, O> where
-    I: FnMut() -> i64,
-    O: FnMut(i64) {
-    pub fn new(program: Vec<i64>, input: I, output: O) -> Self {
-        Machine {
+impl<'a, T: IoProvider> Machine<'a, T> {
+    pub fn new(program: Vec<i64>, io_provider: &'a mut T) -> Self {
+        Machine::<'a, T> {
             memory: program,
             program_counter: 0,
             relative_base: 0,
@@ -70,8 +71,7 @@ impl<I, O> Machine<I, O> where
             halted: false,
             running: false,
             last_output: None,
-            input,
-            output,
+            io_provider
         }
     }
 
@@ -213,7 +213,7 @@ impl<I, O> Machine<I, O> where
             let (mode_addr, value_addr) = arg_addr;
             let addr = self.get_address_from_mode(mode_addr, value_addr);
 
-            let input_value = (self.input)();
+            let input_value = self.io_provider.send_input();
             self.try_write_or_resize(addr, input_value);
         } else {
             panic!("Error: invalid arguments for input operation");
@@ -225,7 +225,7 @@ impl<I, O> Machine<I, O> where
             let (mode, value) = arg_value;
             let output_value = self.get_value_from_mode(mode, value);
 
-            (self.output)(output_value);
+            self.io_provider.get_output(output_value);
             self.last_output = Some(output_value);
         } else {
             panic!("Error: invalid arguments for output operation");

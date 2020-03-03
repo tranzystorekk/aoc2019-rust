@@ -2,7 +2,7 @@ use std::io::{BufRead, Error, ErrorKind};
 
 use itertools::Itertools;
 
-use aoc::intcode::Machine;
+use aoc::intcode::{Machine, ValueProvider};
 use aoc::utils::BufferedInput;
 
 fn parse_input() -> std::io::Result<Vec<i64>> {
@@ -22,9 +22,10 @@ fn parse_input() -> std::io::Result<Vec<i64>> {
 
 fn main() -> std::io::Result<()> {
     let program = parse_input()?;
+    let ref mut io = ValueProvider::new(0);
 
     for (noun, verb) in (0..100).cartesian_product(0..100) {
-        let mut machine = Machine::new(program.clone(), || 0, |_| ());
+        let mut machine = Machine::new(program.clone(), io);
         machine.write(1, noun);
         machine.write(2, verb);
 

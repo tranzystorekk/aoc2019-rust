@@ -1,6 +1,6 @@
 use std::io::{BufRead, Error, ErrorKind};
 
-use aoc::intcode::Machine;
+use aoc::intcode::{Machine, ValueProvider};
 use aoc::utils::BufferedInput;
 
 fn parse_input() -> std::io::Result<Vec<i64>> {
@@ -21,7 +21,8 @@ fn parse_input() -> std::io::Result<Vec<i64>> {
 fn main() -> std::io::Result<()> {
     let program = parse_input()?;
 
-    let mut machine = Machine::new(program, || 2, |_| ());
+    let ref mut io = ValueProvider::new(2);
+    let mut machine = Machine::new(program, io);
     machine.run();
 
     let code = machine.last_output().unwrap();
