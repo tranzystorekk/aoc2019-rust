@@ -147,14 +147,9 @@ impl<'a, T: IoProvider> Machine<'a, T> {
 
     fn arithmetic_operation<F: FnOnce(i64, i64) -> i64>(&mut self, args: Args, op: F) {
         if let Args::Three(arg_a, arg_b, arg_dest) = args {
-            let (mode_a, value_a) = arg_a;
-            let a = self.get_value_from_mode(mode_a, value_a);
-
-            let (mode_b, value_b) = arg_b;
-            let b = self.get_value_from_mode(mode_b, value_b);
-
-            let (mode_dest, value_dest) = arg_dest;
-            let dest_addr = self.get_address_from_mode(mode_dest, value_dest);
+            let a = self.get_value_from_arg(arg_a);
+            let b = self.get_value_from_arg(arg_b);
+            let dest_addr = self.get_address_from_arg(arg_dest);
 
             let result = op(a, b);
             self.try_write_or_resize(dest_addr, result);
@@ -165,14 +160,9 @@ impl<'a, T: IoProvider> Machine<'a, T> {
 
     fn compare_operation<F: FnOnce(i64, i64) -> bool>(&mut self, args: Args, op: F) {
         if let Args::Three(arg_a, arg_b, arg_dest) = args {
-            let (mode_a, value_a) = arg_a;
-            let a = self.get_value_from_mode(mode_a, value_a);
-
-            let (mode_b, value_b) = arg_b;
-            let b = self.get_value_from_mode(mode_b, value_b);
-
-            let (mode_dest, value_dest) = arg_dest;
-            let dest_addr = self.get_address_from_mode(mode_dest, value_dest);
+            let a = self.get_value_from_arg(arg_a);
+            let b = self.get_value_from_arg(arg_b);
+            let dest_addr = self.get_address_from_arg(arg_dest);
 
             let result = if op(a, b) {1} else {0};
             self.try_write_or_resize(dest_addr, result);
@@ -183,11 +173,8 @@ impl<'a, T: IoProvider> Machine<'a, T> {
 
     fn jump_operation<F: FnOnce(i64) -> bool>(&mut self, args: Args, op: F) {
         if let Args::Two(arg_cond, arg_addr) = args {
-            let (mode_cond, value_cond) = arg_cond;
-            let cond = self.get_value_from_mode(mode_cond, value_cond);
-
-            let (mode_addr, value_addr) = arg_addr;
-            let addr = self.get_value_from_mode(mode_addr, value_addr) as usize;
+            let cond = self.get_value_from_arg(arg_cond);
+            let addr = self.get_value_from_arg(arg_addr) as usize;
 
             if op(cond) {
                 self.jump_flag = Some(addr);
@@ -199,8 +186,7 @@ impl<'a, T: IoProvider> Machine<'a, T> {
 
     fn relative_base_operation(&mut self, args: Args) {
         if let Args::One(arg_offset) = args {
-            let (mode_offset, value_offset) = arg_offset;
-            let offset = self.get_value_from_mode(mode_offset, value_offset);
+            let offset = self.get_value_from_arg(arg_offset);
 
             self.relative_base += offset;
         } else {
@@ -210,8 +196,7 @@ impl<'a, T: IoProvider> Machine<'a, T> {
 
     fn input_operation(&mut self, args: Args) {
         if let Args::One(arg_addr) = args {
-            let (mode_addr, value_addr) = arg_addr;
-            let addr = self.get_address_from_mode(mode_addr, value_addr);
+            let addr = self.get_address_from_arg(arg_addr);
 
             let input_value = self.io_provider.send_input();
             self.try_write_or_resize(addr, input_value);
@@ -222,8 +207,7 @@ impl<'a, T: IoProvider> Machine<'a, T> {
 
     fn output_operation(&mut self, args: Args) {
         if let Args::One(arg_value) = args {
-            let (mode, value) = arg_value;
-            let output_value = self.get_value_from_mode(mode, value);
+            let output_value = self.get_value_from_arg(arg_value);
 
             self.io_provider.get_output(output_value);
             self.last_output = Some(output_value);
@@ -274,7 +258,9 @@ impl<'a, T: IoProvider> Machine<'a, T> {
         }
     }
 
-    fn get_value_from_mode(&mut self, mode: AddressMode, v: i64) -> i64 {
+    fn get_value_from_arg(&mut self, arg: Arg) -> i64 {
+        let (mode, v) = arg;
+
         match mode {
             AddressMode::Position => self.try_read_or_resize(v as usize),
             AddressMode::Immediate => v,
@@ -286,14 +272,12 @@ impl<'a, T: IoProvider> Machine<'a, T> {
         }
     }
 
-    fn get_address_from_mode(&self, mode: AddressMode, v: i64) -> usize {
+    fn get_address_from_arg(&self, arg: Arg) -> usize {
+        let (mode, v) = arg;
+
         match mode {
             AddressMode::Position => v as usize,
-            AddressMode::Relative => {
-                let relative_address = self.relative_base + v;
-
-                relative_address as usize
-            },
+            AddressMode::Relative => (self.relative_base + v) as usize,
             AddressMode::Immediate => panic!("Error: write access at an address in immediate mode")
         }
     }
