@@ -59,6 +59,13 @@ impl Args {
             _ => 0
         }
     }
+
+    pub fn is_zero(&self) -> bool {
+        match self {
+            Args::Zero => true,
+            _ => false
+        }
+    }
 }
 
 impl<'a, T: IoProvider> Machine<'a, T> {
@@ -135,12 +142,16 @@ impl<'a, T: IoProvider> Machine<'a, T> {
             7 => self.compare_operation(args, |a, b| a < b),
             8 => self.compare_operation(args, |a, b| a == b),
             9 => self.relative_base_operation(args),
-            99 => self.terminate(),
+            99 => self.terminate(args),
             _ => panic!("Error during execution: unrecognized opcode")
         };
     }
 
-    fn terminate(&mut self) {
+    fn terminate(&mut self, args: Args) {
+        if !args.is_zero() {
+            panic!("Error: terminate received non-empty arguments");
+        }
+
         self.running = false;
         self.halted = true;
     }
