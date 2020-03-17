@@ -21,7 +21,7 @@ fn compute_phase(data: Vec<i32>) -> Vec<i32> {
         .scan(0, |sum, val| {
         *sum += val;
 
-        Some(sum.abs() % 10)
+        Some(*sum % 10)
     })
         .collect();
 
