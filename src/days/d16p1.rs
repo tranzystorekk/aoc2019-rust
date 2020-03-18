@@ -39,8 +39,7 @@ fn compute_phase(data: Vec<i32>) -> Vec<i32> {
 
 fn run_phases(initial: Vec<i32>, n: usize) -> Vec<i32> {
     std::iter::successors(Some(initial), |data| Some(compute_phase(data.clone())))
-        .take(n+1)
-        .last()
+        .nth(n)
         .unwrap()
 }
 
