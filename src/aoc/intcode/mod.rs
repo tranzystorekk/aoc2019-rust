@@ -119,7 +119,7 @@ impl<'a, T: IoProvider> Machine<'a, T> {
         }
     }
 
-    fn run_until_interrupt(&mut self) {
+    pub fn run_until_interrupt(&mut self) {
         self.running = true;
         loop {
             self.step_internal();
