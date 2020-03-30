@@ -102,6 +102,14 @@ impl<'a, T: IoProvider> Machine<'a, T> {
         self.interrupt_on_output = switch;
     }
 
+    pub fn provider(&self) -> &T {
+        self.io_provider
+    }
+
+    pub fn provider_mut(&mut self) -> &mut T {
+        self.io_provider
+    }
+
     pub fn is_halted(&self) -> bool {
         self.halted
     }
