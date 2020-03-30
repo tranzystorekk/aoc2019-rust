@@ -12,6 +12,8 @@ pub struct Machine<'a, T> {
     jump_flag: Option<usize>,
     halted: bool,
     running: bool,
+    interrupt_on_output: bool,
+    output_interrupted_flag: bool,
     last_output: Option<i64>,
     io_provider: &'a mut T
 }
@@ -77,6 +79,8 @@ impl<'a, T: IoProvider> Machine<'a, T> {
             jump_flag: None,
             halted: false,
             running: false,
+            interrupt_on_output: false,
+            output_interrupted_flag: false,
             last_output: None,
             io_provider
         }
@@ -94,6 +98,10 @@ impl<'a, T: IoProvider> Machine<'a, T> {
         self.last_output
     }
 
+    pub fn set_interrupt_on_output(&mut self, switch: bool) {
+        self.interrupt_on_output = switch;
+    }
+
     pub fn is_halted(&self) -> bool {
         self.halted
     }
@@ -107,6 +115,7 @@ impl<'a, T: IoProvider> Machine<'a, T> {
     pub fn step(&mut self) {
         if !self.halted {
             self.step_internal();
+            self.check_flags();
         }
     }
 
@@ -114,6 +123,7 @@ impl<'a, T: IoProvider> Machine<'a, T> {
         self.running = true;
         loop {
             self.step_internal();
+            self.check_flags();
 
             if !self.running {
                 break;
@@ -128,6 +138,13 @@ impl<'a, T: IoProvider> Machine<'a, T> {
         match self.jump_flag.take() {
             Some(jump_address) => self.program_counter = jump_address,
             _ => self.program_counter += args.len() + 1
+        }
+    }
+
+    fn check_flags(&mut self) {
+        if self.output_interrupted_flag {
+            self.running = false;
+            self.output_interrupted_flag = false;
         }
     }
 
@@ -222,6 +239,10 @@ impl<'a, T: IoProvider> Machine<'a, T> {
 
             self.io_provider.get_output(output_value);
             self.last_output = Some(output_value);
+
+            if self.interrupt_on_output {
+                self.output_interrupted_flag = true;
+            }
         } else {
             panic!("Error: invalid arguments for output operation");
         }
