@@ -194,13 +194,13 @@ fn main() -> std::io::Result<()> {
         })
         .collect();
 
-    let (min_x, max_x) = match white_tiles.iter().minmax_by_key(|(x, _)| *x) {
-        MinMax((min_x, _), (max_x, _)) => (*min_x, *max_x),
+    let (min_x, max_x) = match white_tiles.iter().minmax_by_key(|(x, _)| x) {
+        MinMax(&(min_x, _), &(max_x, _)) => (min_x, max_x),
         _ => panic!("Incorrect picture")
     };
 
-    let (min_y, max_y) = match white_tiles.iter().minmax_by_key(|(_, y)| *y) {
-        MinMax((_, min_y), (_, max_y)) => (*min_y, *max_y),
+    let (min_y, max_y) = match white_tiles.iter().minmax_by_key(|(_, y)| y) {
+        MinMax(&(_, min_y), &(_, max_y)) => (min_y, max_y),
         _ => panic!("Incorrect picture")
     };
 
