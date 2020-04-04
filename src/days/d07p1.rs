@@ -1,24 +1,7 @@
-use std::io::{BufRead, Error, ErrorKind};
-
 use itertools::Itertools;
 
 use aoc::intcode::{IoProvider, Machine};
-use aoc::utils::BufferedInput;
-
-fn parse_input() -> std::io::Result<Vec<i64>> {
-    let input = BufferedInput::parse_args("Day 7: Amplification Circuit - Part 1")?;
-    let line = input.lines()
-        .map(Result::unwrap)
-        .next()
-        .ok_or_else(|| Error::new(ErrorKind::Other, "Input has no content"))?;
-
-    let result = line.as_str()
-        .split(',')
-        .map(|s| s.parse().expect("Failed to parse intcode program"))
-        .collect();
-
-    Ok(result)
-}
+use aoc::utils::parse_intcode_program;
 
 struct Input {
     it: Box<dyn Iterator<Item = i64>>,
@@ -54,7 +37,7 @@ fn run_series(phases: Vec<i64>, prog: &Vec<i64>) -> i64 {
 }
 
 fn main() -> std::io::Result<()> {
-    let ref program = parse_input()?;
+    let ref program = parse_intcode_program("Day 7: Amplification Circuit - Part 1")?;
 
     let result = (0..5).permutations(5)
         .map(|ph| run_series(ph, program))

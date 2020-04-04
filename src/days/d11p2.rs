@@ -1,11 +1,10 @@
-use std::io::{BufRead, Error, ErrorKind};
 use std::collections::{HashMap, HashSet};
 
 use itertools::Itertools;
 use itertools::MinMaxResult::MinMax;
 
 use aoc::intcode::{IoProvider, Machine};
-use aoc::utils::BufferedInput;
+use aoc::utils::parse_intcode_program;
 
 #[derive(Clone, Copy)]
 enum Color {
@@ -165,23 +164,8 @@ impl IoProvider for PainterBot {
     }
 }
 
-fn parse_input() -> std::io::Result<Vec<i64>> {
-    let input = BufferedInput::parse_args("Day 9: Sensor Boost - Part 2")?;
-    let line = input.lines()
-        .map(Result::unwrap)
-        .next()
-        .ok_or_else(|| Error::new(ErrorKind::Other, "Input has no content"))?;
-
-    let result = line.as_str()
-        .split(',')
-        .map(|s| s.parse().expect("Failed to parse intcode program"))
-        .collect();
-
-    Ok(result)
-}
-
 fn main() -> std::io::Result<()> {
-    let program = parse_input()?;
+    let program = parse_intcode_program("Day 11: Space Police - Part 2")?;
 
     let ref mut bot = PainterBot::new();
     let mut cpu = Machine::new(program, bot);
