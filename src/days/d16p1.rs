@@ -10,7 +10,7 @@ fn parse_input() -> std::io::Result<Vec<i32>> {
 
     let result = line.as_str()
         .chars()
-        .map(|c| c.to_digit(10).unwrap() as i32)
+        .map(|c| c.to_digit(10).expect("Failed to parse FFT input") as i32)
         .collect();
 
     Ok(result)

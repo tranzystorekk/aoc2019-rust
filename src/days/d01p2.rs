@@ -5,7 +5,7 @@ fn parse_input() -> std::io::Result<Vec<i32>> {
     let input = BufferedInput::parse_args("Day 1: The Tyranny of the Rocket Equation - Part 2")?;
     let lines = input.lines().map(Result::unwrap);
 
-    let parsed: Vec<i32> = lines.map(|line| line.parse().unwrap()).collect();
+    let parsed: Vec<i32> = lines.map(|line| line.parse().expect("Failed to parse module weights")).collect();
     Ok(parsed)
 }
 

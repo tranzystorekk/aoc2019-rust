@@ -12,7 +12,7 @@ fn parse_input() -> std::io::Result<Vec<i64>> {
 
     let result = line.as_str()
         .split(',')
-        .map(|s| s.parse().unwrap())
+        .map(|s| s.parse().expect("Failed to parse intcode program"))
         .collect();
 
     Ok(result)

@@ -12,7 +12,7 @@ fn parse_input() -> std::io::Result<(i32, i32)> {
 
     let result = line.as_str()
         .split('-')
-        .map(|n| n.parse().unwrap())
+        .map(|n| n.parse().expect("Failed to parse password check bounds"))
         .collect_tuple()
         .unwrap();
 
