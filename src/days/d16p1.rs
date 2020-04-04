@@ -26,8 +26,7 @@ fn get_pattern(position: usize) -> impl Iterator<Item = i32> {
 }
 
 fn compute_phase(data: &Vec<i32>) -> Vec<i32> {
-    (1..).take(data.len())
-        .map(|pos| {
+    (1 .. data.len() + 1).map(|pos| {
         let pattern = get_pattern(pos);
 
         let summed: i32 = data.into_iter().zip(pattern).map(|(v, pat)| v * pat).sum();
