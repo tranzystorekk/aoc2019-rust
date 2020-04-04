@@ -25,12 +25,12 @@ fn get_pattern(position: usize) -> impl Iterator<Item = i32> {
         .skip(1)
 }
 
-fn compute_phase(data: Vec<i32>) -> Vec<i32> {
+fn compute_phase(data: &Vec<i32>) -> Vec<i32> {
     (1..).take(data.len())
         .map(|pos| {
         let pattern = get_pattern(pos);
 
-        let summed: i32 = data.iter().zip(pattern).map(|(v, pat)| v * pat).sum();
+        let summed: i32 = data.into_iter().zip(pattern).map(|(v, pat)| v * pat).sum();
 
         summed.abs() % 10
     })
@@ -38,7 +38,7 @@ fn compute_phase(data: Vec<i32>) -> Vec<i32> {
 }
 
 fn run_phases(initial: Vec<i32>, n: usize) -> Vec<i32> {
-    std::iter::successors(Some(initial), |data| Some(compute_phase(data.clone())))
+    std::iter::successors(Some(initial), |data| Some(compute_phase(data)))
         .nth(n)
         .unwrap()
 }

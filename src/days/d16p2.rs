@@ -16,7 +16,7 @@ fn parse_input() -> std::io::Result<(String, Vec<i32>)> {
     Ok((line, result))
 }
 
-fn compute_phase(data: Vec<i32>) -> Vec<i32> {
+fn compute_phase(data: &Vec<i32>) -> Vec<i32> {
     let mut transformed: Vec<i32> = data.into_iter().rev()
         .scan(0, |sum, val| {
         *sum += val;
@@ -31,7 +31,7 @@ fn compute_phase(data: Vec<i32>) -> Vec<i32> {
 }
 
 fn run_phases(initial: Vec<i32>, n: usize) -> Vec<i32> {
-    std::iter::successors(Some(initial), |data| Some(compute_phase(data.clone())))
+    std::iter::successors(Some(initial), |data| Some(compute_phase(data)))
         .nth(n)
         .unwrap()
 }
