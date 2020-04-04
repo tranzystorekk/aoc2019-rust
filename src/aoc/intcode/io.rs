@@ -6,14 +6,12 @@ pub trait IoProvider {
 }
 
 pub struct ValueProvider {
-    value: i64
+    value: i64,
 }
 
 impl ValueProvider {
     pub fn new(value: i64) -> Self {
-        ValueProvider {
-            value
-        }
+        ValueProvider { value }
     }
 }
 

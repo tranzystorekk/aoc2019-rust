@@ -1,14 +1,16 @@
-use std::io::{BufRead, Error, ErrorKind};
 use aoc::utils::BufferedInput;
+use std::io::{BufRead, Error, ErrorKind};
 
 fn parse_input() -> std::io::Result<Vec<i32>> {
     let input = BufferedInput::parse_args("Day 16: Flawed Frequency Transmission - Part 1")?;
-    let line = input.lines()
+    let line = input
+        .lines()
         .map(Result::unwrap)
         .next()
         .ok_or_else(|| Error::new(ErrorKind::Other, "Input has no content"))?;
 
-    let result = line.as_str()
+    let result = line
+        .as_str()
         .chars()
         .map(|c| c.to_digit(10).expect("Failed to parse FFT input") as i32)
         .collect();
@@ -26,13 +28,14 @@ fn get_pattern(position: usize) -> impl Iterator<Item = i32> {
 }
 
 fn compute_phase(data: &Vec<i32>) -> Vec<i32> {
-    (1 .. data.len() + 1).map(|pos| {
-        let pattern = get_pattern(pos);
+    (1..data.len() + 1)
+        .map(|pos| {
+            let pattern = get_pattern(pos);
 
-        let summed: i32 = data.into_iter().zip(pattern).map(|(v, pat)| v * pat).sum();
+            let summed: i32 = data.into_iter().zip(pattern).map(|(v, pat)| v * pat).sum();
 
-        summed.abs() % 10
-    })
+            summed.abs() % 10
+        })
         .collect()
 }
 
@@ -46,7 +49,8 @@ fn main() -> std::io::Result<()> {
     let received_data = parse_input()?;
     let computed = run_phases(received_data, 100);
 
-    let code: String = computed[..8].iter()
+    let code: String = computed[..8]
+        .iter()
         .map(|digit| std::char::from_digit(*digit as u32, 10).unwrap())
         .collect();
 

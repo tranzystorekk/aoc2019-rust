@@ -9,25 +9,25 @@ use aoc::utils::parse_intcode_program;
 #[derive(Clone, Copy)]
 enum Color {
     Black,
-    White
+    White,
 }
 
 enum Direction {
     North,
     East,
     South,
-    West
+    West,
 }
 
 enum InstructionState {
     AwaitingColor,
-    AwaitingTurn
+    AwaitingTurn,
 }
 
 struct Walker {
     x: i64,
     y: i64,
-    facing: Direction
+    facing: Direction,
 }
 
 impl Color {
@@ -35,7 +35,7 @@ impl Color {
         match val {
             0 => Color::Black,
             1 => Color::White,
-            _ => panic!("Invalid color value")
+            _ => panic!("Invalid color value"),
         }
     }
 
@@ -53,7 +53,7 @@ impl Direction {
             Direction::North => Direction::West,
             Direction::West => Direction::South,
             Direction::South => Direction::East,
-            Direction::East => Direction::North
+            Direction::East => Direction::North,
         };
     }
 
@@ -62,7 +62,7 @@ impl Direction {
             Direction::North => Direction::East,
             Direction::East => Direction::South,
             Direction::South => Direction::West,
-            Direction::West => Direction::North
+            Direction::West => Direction::North,
         }
     }
 }
@@ -71,7 +71,7 @@ impl InstructionState {
     pub fn advance(&mut self) {
         *self = match self {
             InstructionState::AwaitingColor => InstructionState::AwaitingTurn,
-            InstructionState::AwaitingTurn => InstructionState::AwaitingColor
+            InstructionState::AwaitingTurn => InstructionState::AwaitingColor,
         }
     }
 }
@@ -81,7 +81,7 @@ impl Walker {
         Walker {
             x: 0,
             y: 0,
-            facing: Direction::North
+            facing: Direction::North,
         }
     }
 
@@ -90,7 +90,7 @@ impl Walker {
             Direction::North => self.y += 1,
             Direction::South => self.y -= 1,
             Direction::East => self.x += 1,
-            Direction::West => self.x -= 1
+            Direction::West => self.x -= 1,
         }
     }
 
@@ -110,7 +110,7 @@ impl Walker {
 struct PainterBot {
     grid: HashMap<(i64, i64), Color>,
     walker: Walker,
-    state: InstructionState
+    state: InstructionState,
 }
 
 impl PainterBot {
@@ -118,7 +118,7 @@ impl PainterBot {
         PainterBot {
             grid: [((0, 0), Color::White)].iter().cloned().collect(),
             walker: Walker::new(),
-            state: InstructionState::AwaitingColor
+            state: InstructionState::AwaitingColor,
         }
     }
 
@@ -138,12 +138,12 @@ impl PainterBot {
                 let pos = self.walker.position();
 
                 *self.grid.entry(pos).or_insert(Color::Black) = Color::from_value(instr);
-            },
+            }
             InstructionState::AwaitingTurn => {
                 match instr {
                     0 => self.walker.turn_left(),
                     1 => self.walker.turn_right(),
-                    _ => panic!("Invalid direction instruction from CPU")
+                    _ => panic!("Invalid direction instruction from CPU"),
                 };
 
                 self.walker.walk();
@@ -171,27 +171,38 @@ fn main() -> std::io::Result<()> {
     let mut cpu = Machine::new(program, bot);
     cpu.run();
 
-    let white_tiles: HashSet<(i64, i64)> = bot.grid().iter()
+    let white_tiles: HashSet<(i64, i64)> = bot
+        .grid()
+        .iter()
         .filter_map(|(pos, color)| match color {
             Color::White => Some(*pos),
-            _ => None
+            _ => None,
         })
         .collect();
 
     let (min_x, max_x) = match white_tiles.iter().minmax_by_key(|(x, _)| x) {
         MinMax(&(min_x, _), &(max_x, _)) => (min_x, max_x),
-        _ => panic!("Incorrect picture")
+        _ => panic!("Incorrect picture"),
     };
 
     let (min_y, max_y) = match white_tiles.iter().minmax_by_key(|(_, y)| y) {
         MinMax(&(_, min_y), &(_, max_y)) => (min_y, max_y),
-        _ => panic!("Incorrect picture")
+        _ => panic!("Incorrect picture"),
     };
 
-    let picture = (min_y .. max_y + 1).rev()
-        .map(|y| (min_x .. max_x + 1)
-            .map(|x| if white_tiles.contains(&(x, y)) {'#'} else {' '})
-            .collect::<String>())
+    let picture = (min_y..max_y + 1)
+        .rev()
+        .map(|y| {
+            (min_x..max_x + 1)
+                .map(|x| {
+                    if white_tiles.contains(&(x, y)) {
+                        '#'
+                    } else {
+                        ' '
+                    }
+                })
+                .collect::<String>()
+        })
         .join("\n");
 
     println!("{}", picture);

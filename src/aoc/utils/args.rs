@@ -11,11 +11,11 @@ pub enum BufferedInput {
 
 impl BufferedInput {
     pub fn parse_args(description: &str) -> std::io::Result<Self> {
-        let app = App::new("")
-            .about(description)
-            .arg(Arg::with_name("input")
+        let app = App::new("").about(description).arg(
+            Arg::with_name("input")
                 .value_name("FILE")
-                .help("Input file (defaults to STDIN if not provided)"));
+                .help("Input file (defaults to STDIN if not provided)"),
+        );
 
         let matches = app.get_matches();
 

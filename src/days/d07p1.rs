@@ -11,13 +11,13 @@ impl Input {
     pub fn with_params(phase: i64, input: i64) -> Self {
         let seq = vec![phase, input];
         Input {
-            it: Box::new(seq.into_iter())
+            it: Box::new(seq.into_iter()),
         }
     }
 }
 
 impl IoProvider for Input {
-    fn send_input(& mut self) -> i64 {
+    fn send_input(&mut self) -> i64 {
         self.it.next().unwrap()
     }
 }
@@ -39,7 +39,8 @@ fn run_series(phases: Vec<i64>, prog: &Vec<i64>) -> i64 {
 fn main() -> std::io::Result<()> {
     let ref program = parse_intcode_program("Day 7: Amplification Circuit - Part 1")?;
 
-    let result = (0..5).permutations(5)
+    let result = (0..5)
+        .permutations(5)
         .map(|ph| run_series(ph, program))
         .max()
         .unwrap();

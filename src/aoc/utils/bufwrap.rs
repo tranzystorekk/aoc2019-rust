@@ -1,9 +1,9 @@
 use std::fs::File;
-use std::io::{BufRead, BufReader, Error, ErrorKind, Read, Stdin, self};
+use std::io::{self, BufRead, BufReader, Error, ErrorKind, Read, Stdin};
 use std::path::Path;
 
 pub struct WrappedBufReader<T> {
-    reader: BufReader<T>
+    reader: BufReader<T>,
 }
 
 impl<T: Read> Read for WrappedBufReader<T> {
@@ -11,7 +11,6 @@ impl<T: Read> Read for WrappedBufReader<T> {
         self.reader.read(buf)
     }
 }
-
 
 impl<T: Read> BufRead for WrappedBufReader<T> {
     fn fill_buf(&mut self) -> std::io::Result<&[u8]> {
@@ -36,7 +35,7 @@ impl FileReader {
         }
 
         let returned_reader = FileReader {
-            reader: BufReader::new(file)
+            reader: BufReader::new(file),
         };
 
         Ok(returned_reader)
@@ -46,7 +45,7 @@ impl FileReader {
 impl StdinReader {
     pub fn new() -> Self {
         StdinReader {
-            reader: BufReader::new(io::stdin())
+            reader: BufReader::new(io::stdin()),
         }
     }
 }

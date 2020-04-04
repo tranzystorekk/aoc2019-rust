@@ -15,14 +15,14 @@ pub struct Machine<'a, T> {
     interrupt_on_output: bool,
     output_interrupted_flag: bool,
     last_output: Option<i64>,
-    io_provider: &'a mut T
+    io_provider: &'a mut T,
 }
 
 #[derive(Copy, Clone)]
 enum AddressMode {
     Position,
     Immediate,
-    Relative
+    Relative,
 }
 
 type Arg = (AddressMode, i64);
@@ -32,7 +32,7 @@ enum Args {
     Zero,
     One(Arg),
     Two(Arg, Arg),
-    Three(Arg, Arg, Arg)
+    Three(Arg, Arg, Arg),
 }
 
 fn get_modes(mode_num: i64) -> impl Iterator<Item = AddressMode> {
@@ -45,7 +45,7 @@ fn get_modes(mode_num: i64) -> impl Iterator<Item = AddressMode> {
             0 => AddressMode::Position,
             1 => AddressMode::Immediate,
             2 => AddressMode::Relative,
-            _ => panic!("Error when parsing mode: unrecognized address mode")
+            _ => panic!("Error when parsing mode: unrecognized address mode"),
         };
 
         Some(result)
@@ -58,14 +58,14 @@ impl Args {
             Args::Three(_, _, _) => 3,
             Args::Two(_, _) => 2,
             Args::One(_) => 1,
-            _ => 0
+            _ => 0,
         }
     }
 
     pub fn is_zero(&self) -> bool {
         match self {
             Args::Zero => true,
-            _ => false
+            _ => false,
         }
     }
 }
@@ -82,7 +82,7 @@ impl<'a, T: IoProvider> Machine<'a, T> {
             interrupt_on_output: false,
             output_interrupted_flag: false,
             last_output: None,
-            io_provider
+            io_provider,
         }
     }
 
@@ -145,7 +145,7 @@ impl<'a, T: IoProvider> Machine<'a, T> {
 
         match self.jump_flag.take() {
             Some(jump_address) => self.program_counter = jump_address,
-            _ => self.program_counter += args.len() + 1
+            _ => self.program_counter += args.len() + 1,
         }
     }
 
@@ -168,7 +168,7 @@ impl<'a, T: IoProvider> Machine<'a, T> {
             8 => self.compare_operation(args, |a, b| a == b),
             9 => self.relative_base_operation(args),
             99 => self.terminate(args),
-            _ => panic!("Error during execution: unrecognized opcode")
+            _ => panic!("Error during execution: unrecognized opcode"),
         };
     }
 
@@ -200,7 +200,7 @@ impl<'a, T: IoProvider> Machine<'a, T> {
             let b = self.get_value_from_arg(arg_b);
             let dest_addr = self.get_address_from_arg(arg_dest);
 
-            let result = if op(a, b) {1} else {0};
+            let result = if op(a, b) { 1 } else { 0 };
             self.try_write_or_resize(dest_addr, result);
         } else {
             panic!("Error: invalid arguments for comparison operation");
@@ -265,7 +265,7 @@ impl<'a, T: IoProvider> Machine<'a, T> {
             5 | 6 => 2,
             3 | 4 | 9 => 1,
             99 => 0,
-            _ => panic!("Error when parsing instruction: unrecognized opcode")
+            _ => panic!("Error when parsing instruction: unrecognized opcode"),
         };
 
         (op, self.get_args(n_args, opcode_unparsed / 100))
@@ -274,27 +274,26 @@ impl<'a, T: IoProvider> Machine<'a, T> {
     fn get_args(&self, n_args: usize, modes: i64) -> Args {
         let arg_begin = self.program_counter + 1;
         let arg_end = self.program_counter + n_args + 1;
-        let args = get_modes(modes)
-            .zip(self.memory[arg_begin..arg_end].iter().copied());
+        let args = get_modes(modes).zip(self.memory[arg_begin..arg_end].iter().copied());
 
         match n_args {
             3 => {
                 let (a, b, c) = args.collect_tuple().unwrap();
 
                 Args::Three(a, b, c)
-            },
+            }
             2 => {
                 let (a, b) = args.collect_tuple().unwrap();
 
                 Args::Two(a, b)
-            },
+            }
             1 => {
                 let (a,) = args.collect_tuple().unwrap();
 
                 Args::One(a)
-            },
+            }
             0 => Args::Zero,
-            _ => panic!("Error: unrecognized argument number")
+            _ => panic!("Error: unrecognized argument number"),
         }
     }
 
@@ -318,7 +317,7 @@ impl<'a, T: IoProvider> Machine<'a, T> {
         match mode {
             AddressMode::Position => v as usize,
             AddressMode::Relative => (self.relative_base + v) as usize,
-            AddressMode::Immediate => panic!("Error: write access at an address in immediate mode")
+            AddressMode::Immediate => panic!("Error: write access at an address in immediate mode"),
         }
     }
 

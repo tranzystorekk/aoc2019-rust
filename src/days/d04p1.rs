@@ -1,16 +1,18 @@
-use std::io::{BufRead, Error, ErrorKind};
 use aoc::utils::BufferedInput;
+use std::io::{BufRead, Error, ErrorKind};
 
 use itertools::Itertools;
 
 fn parse_input() -> std::io::Result<(i32, i32)> {
     let input = BufferedInput::parse_args("Day 4: Secure Container - Part 1")?;
-    let line = input.lines()
+    let line = input
+        .lines()
         .map(Result::unwrap)
         .next()
         .ok_or_else(|| Error::new(ErrorKind::Other, "Input has no content"))?;
 
-    let result = line.as_str()
+    let result = line
+        .as_str()
         .split('-')
         .map(|n| n.parse().expect("Failed to parse password check bounds"))
         .collect_tuple()

@@ -6,7 +6,7 @@ use aoc::utils::parse_intcode_program;
 struct Link {
     phase: i64,
     value: i64,
-    awaiting_phase: bool
+    awaiting_phase: bool,
 }
 
 impl Link {
@@ -14,7 +14,7 @@ impl Link {
         Link {
             phase,
             value: 0,
-            awaiting_phase: true
+            awaiting_phase: true,
         }
     }
 
@@ -28,7 +28,7 @@ impl Link {
 }
 
 impl IoProvider for Link {
-    fn send_input(& mut self) -> i64 {
+    fn send_input(&mut self) -> i64 {
         if self.awaiting_phase {
             self.awaiting_phase = false;
             self.phase
@@ -37,16 +37,15 @@ impl IoProvider for Link {
         }
     }
 
-    fn get_output(& mut self, value: i64) {
+    fn get_output(&mut self, value: i64) {
         self.value = value;
     }
 }
 
 fn run_feedback_loop(phases: Vec<i64>, prog: &Vec<i64>) -> i64 {
-    let mut links: Vec<Link> = phases.into_iter()
-        .map(|ph| Link::with_phase(ph))
-        .collect();
-    let mut cpus: Vec<_> = links.iter_mut()
+    let mut links: Vec<Link> = phases.into_iter().map(|ph| Link::with_phase(ph)).collect();
+    let mut cpus: Vec<_> = links
+        .iter_mut()
         .map(|link| {
             let mut m = Machine::new(prog.clone(), link);
             m.set_interrupt_on_output(true);
@@ -70,7 +69,8 @@ fn run_feedback_loop(phases: Vec<i64>, prog: &Vec<i64>) -> i64 {
 fn main() -> std::io::Result<()> {
     let ref program = parse_intcode_program("Day 7: Amplification Circuit - Part 2")?;
 
-    let result = (5..10).permutations(5)
+    let result = (5..10)
+        .permutations(5)
         .map(|ph| run_feedback_loop(ph, program))
         .max()
         .unwrap();
