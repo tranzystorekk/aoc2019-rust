@@ -1,6 +1,8 @@
 use aoc::utils::BufferedInput;
 use std::io::{BufRead, Error, ErrorKind};
 
+use itertools::iterate;
+
 fn parse_input() -> std::io::Result<Vec<i32>> {
     let input = BufferedInput::parse_args("Day 16: Flawed Frequency Transmission - Part 1")?;
     let line = input
@@ -40,9 +42,7 @@ fn compute_phase(data: &Vec<i32>) -> Vec<i32> {
 }
 
 fn run_phases(initial: Vec<i32>, n: usize) -> Vec<i32> {
-    std::iter::successors(Some(initial), |data| Some(compute_phase(data)))
-        .nth(n)
-        .unwrap()
+    iterate(initial, compute_phase).nth(n).unwrap()
 }
 
 fn main() -> std::io::Result<()> {
