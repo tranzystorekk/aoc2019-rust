@@ -41,11 +41,7 @@ fn is_valid(password: &str) -> bool {
         }
     }
 
-    if group_len == 2 {
-        is_adjacent_pair_same = true;
-    }
-
-    is_adjacent_pair_same
+    group_len == 2 || is_adjacent_pair_same
 }
 
 fn main() -> std::io::Result<()> {
