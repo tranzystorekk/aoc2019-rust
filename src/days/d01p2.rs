@@ -1,6 +1,8 @@
 use aoc::utils::BufferedInput;
 use std::io::BufRead;
 
+use itertools::iterate;
+
 fn parse_input() -> std::io::Result<Vec<i32>> {
     let input = BufferedInput::parse_args("Day 1: The Tyranny of the Rocket Equation - Part 2")?;
     let lines = input.lines().map(Result::unwrap);
@@ -16,8 +18,7 @@ fn fuel_req(weight: i32) -> i32 {
 }
 
 fn fuel_req_chained(weight: i32) -> i32 {
-    let start = Some(fuel_req(weight)).filter(|&fuel| fuel > 0);
-    let chain = std::iter::successors(start, |&val| Some(fuel_req(val)));
+    let chain = iterate(fuel_req(weight), |&val| fuel_req(val));
 
     chain.take_while(|&req| req > 0).sum()
 }
