@@ -12,7 +12,6 @@ fn parse_input() -> std::io::Result<(String, Vec<i32>)> {
         .ok_or_else(|| Error::new(ErrorKind::Other, "Input has no content"))?;
 
     let result = line
-        .as_str()
         .chars()
         .map(|c| c.to_digit(10).expect("Failed to parse FFT input") as i32)
         .collect();

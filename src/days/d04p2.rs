@@ -12,7 +12,6 @@ fn parse_input() -> std::io::Result<(i32, i32)> {
         .ok_or_else(|| Error::new(ErrorKind::Other, "Input has no content"))?;
 
     let result = line
-        .as_str()
         .split('-')
         .map(|n| n.parse().expect("Failed to parse password check bounds"))
         .collect_tuple()
