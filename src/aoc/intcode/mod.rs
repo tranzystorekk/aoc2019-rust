@@ -36,10 +36,9 @@ enum Args {
 }
 
 fn get_modes(mode_num: i64) -> impl Iterator<Item = AddressMode> {
-    let mut state = mode_num;
-    std::iter::from_fn(move || {
-        let current = state % 10;
-        state /= 10;
+    itertools::unfold(mode_num, |state| {
+        let current = *state % 10;
+        *state /= 10;
 
         let result = match current {
             0 => AddressMode::Position,
