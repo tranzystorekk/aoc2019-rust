@@ -1,6 +1,6 @@
 use std::io::{BufRead, Read};
 
-use crate::utils::bufwrap::{FileReader, StdinReader};
+use crate::utils::bufwrap::{file_reader, stdin_reader, FileReader, StdinReader};
 
 use clap::{App, Arg};
 
@@ -20,8 +20,8 @@ impl BufferedInput {
         let matches = app.get_matches();
 
         let result = match matches.value_of("input") {
-            Some(path) => BufferedInput::File(FileReader::open(path)?),
-            _ => BufferedInput::Stdin(StdinReader::new()),
+            Some(path) => BufferedInput::File(file_reader(path)?),
+            _ => BufferedInput::Stdin(stdin_reader()),
         };
 
         Ok(result)
