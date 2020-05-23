@@ -1,4 +1,4 @@
-pub mod io;
+mod io;
 
 use itertools::Itertools;
 

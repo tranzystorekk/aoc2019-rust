@@ -1,5 +1,5 @@
-pub mod args;
-pub mod bufwrap;
+mod args;
+mod bufwrap;
 
 use std::io::{BufRead, Error, ErrorKind};
 
