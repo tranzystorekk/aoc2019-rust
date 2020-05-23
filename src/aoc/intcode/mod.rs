@@ -139,10 +139,10 @@ impl<'a, T: IoProvider> Machine<'a, T> {
         let (opcode, args) = self.parse_instruction();
         self.exec(opcode, args);
 
-        match self.jump_flag.take() {
-            Some(jump_address) => self.program_counter = jump_address,
-            _ => self.program_counter += args.len() + 1,
-        }
+        self.program_counter = self
+            .jump_flag
+            .take()
+            .unwrap_or_else(|| self.program_counter + args.len() + 1);
     }
 
     fn check_flags(&mut self) {
