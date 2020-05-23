@@ -62,10 +62,7 @@ impl Args {
     }
 
     pub fn is_zero(&self) -> bool {
-        match self {
-            Args::Zero => true,
-            _ => false,
-        }
+        matches!(self, Args::Zero)
     }
 }
 
