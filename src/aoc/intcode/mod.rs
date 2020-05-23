@@ -1,6 +1,8 @@
 mod io;
 
 use itertools::Itertools;
+use std::cmp::{PartialEq, PartialOrd};
+use std::ops::{Add, Mul};
 
 pub use io::{IoProvider, ValueProvider};
 
@@ -154,14 +156,14 @@ impl<'a, T: IoProvider> Machine<'a, T> {
 
     fn exec(&mut self, opcode: i64, args: Args) {
         match opcode {
-            1 => self.arithmetic_operation(args, |a, b| a + b),
-            2 => self.arithmetic_operation(args, |a, b| a * b),
+            1 => self.arithmetic_operation(args, Add::add),
+            2 => self.arithmetic_operation(args, Mul::mul),
             3 => self.input_operation(args),
             4 => self.output_operation(args),
             5 => self.jump_operation(args, |v| v != 0),
             6 => self.jump_operation(args, |v| v == 0),
-            7 => self.compare_operation(args, |a, b| a < b),
-            8 => self.compare_operation(args, |a, b| a == b),
+            7 => self.compare_operation(args, PartialOrd::lt),
+            8 => self.compare_operation(args, PartialEq::eq),
             9 => self.relative_base_operation(args),
             99 => self.terminate(args),
             _ => panic!("Error during execution: unrecognized opcode"),
@@ -190,10 +192,10 @@ impl<'a, T: IoProvider> Machine<'a, T> {
         }
     }
 
-    fn compare_operation<F: FnOnce(i64, i64) -> bool>(&mut self, args: Args, op: F) {
+    fn compare_operation<F: FnOnce(&i64, &i64) -> bool>(&mut self, args: Args, op: F) {
         if let Args::Three(arg_a, arg_b, arg_dest) = args {
-            let a = self.get_value_from_arg(arg_a);
-            let b = self.get_value_from_arg(arg_b);
+            let ref a = self.get_value_from_arg(arg_a);
+            let ref b = self.get_value_from_arg(arg_b);
             let dest_addr = self.get_address_from_arg(arg_dest);
 
             let result = if op(a, b) { 1 } else { 0 };
