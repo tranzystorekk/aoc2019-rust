@@ -68,22 +68,7 @@ impl Args {
     }
 }
 
-impl<'a, T: IoProvider> Machine<'a, T> {
-    pub fn new(program: Vec<i64>, io_provider: &'a mut T) -> Self {
-        Machine::<'a, T> {
-            memory: program,
-            program_counter: 0,
-            relative_base: 0,
-            jump_flag: None,
-            halted: false,
-            running: false,
-            interrupt_on_output: false,
-            output_interrupted_flag: false,
-            last_output: None,
-            io_provider,
-        }
-    }
-
+impl<T> Machine<'_, T> {
     pub fn read(&self, position: usize) -> i64 {
         self.memory[position]
     }
@@ -100,6 +85,10 @@ impl<'a, T: IoProvider> Machine<'a, T> {
         self.interrupt_on_output = switch;
     }
 
+    pub fn is_halted(&self) -> bool {
+        self.halted
+    }
+
     pub fn provider(&self) -> &T {
         self.io_provider
     }
@@ -107,9 +96,22 @@ impl<'a, T: IoProvider> Machine<'a, T> {
     pub fn provider_mut(&mut self) -> &mut T {
         self.io_provider
     }
+}
 
-    pub fn is_halted(&self) -> bool {
-        self.halted
+impl<'a, T: IoProvider> Machine<'a, T> {
+    pub fn new(program: Vec<i64>, io_provider: &'a mut T) -> Self {
+        Machine::<'a, T> {
+            memory: program,
+            program_counter: 0,
+            relative_base: 0,
+            jump_flag: None,
+            halted: false,
+            running: false,
+            interrupt_on_output: false,
+            output_interrupted_flag: false,
+            last_output: None,
+            io_provider,
+        }
     }
 
     pub fn run(&mut self) {
