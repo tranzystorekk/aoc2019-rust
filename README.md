@@ -22,7 +22,7 @@ To run a specific solution, execute the following:
 
 `cargo run --bin <SOLUTION_NAME> [<INPUT_FILE>]`
 
-## [utils](src/aoc/utils) library
+## aoc-utils crate
 
 Although Rust tries to combine succinctness and efficiency,
 it is in many aspects not as expressive as Python.
@@ -33,6 +33,4 @@ That includes regular text files and STDIN, for quick dirty runs with data manua
 To be able to do that without writing lots of boilerplate code in each solution,
 I have devised the *utils* library.
 
-At its core it provides wrappers for the `std::io::BufReader` struct in the `utils::bufwrap` module,
-as well as the `utils::args::BufferedInput` struct, which uses [clap](https://github.com/clap-rs/clap)
-to automatically parse command line arguments and prepare the relevant wrapper.
+This has been moved to the [aoc-utils](https://github.com/tranzystorek-io/aoc-utils) repository.
