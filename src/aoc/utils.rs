@@ -1,9 +1,6 @@
-mod args;
-mod bufwrap;
-
 use std::io::{BufRead, Error, ErrorKind};
 
-pub use args::BufferedInput;
+pub use aoc_utils::BufferedInput;
 
 pub fn parse_intcode_program(description: &str) -> std::io::Result<Vec<i64>> {
     let input = BufferedInput::parse_args(description)?;

@@ -83,5 +83,5 @@ name = "d16p2"
 path = "src/days/d16p2.rs"
 
 [dependencies]
-clap = "2.33.0"
+aoc-utils = "0.1.0"
 itertools = "0.8.2"
