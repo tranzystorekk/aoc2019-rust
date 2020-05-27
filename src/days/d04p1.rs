@@ -1,13 +1,12 @@
 use aoc::utils::BufferedInput;
-use std::io::{BufRead, Error, ErrorKind};
+use std::io::{Error, ErrorKind};
 
 use itertools::Itertools;
 
 fn parse_input() -> std::io::Result<(i32, i32)> {
     let input = BufferedInput::parse_args("Day 4: Secure Container - Part 1")?;
     let line = input
-        .lines()
-        .map(Result::unwrap)
+        .unwrapped_lines()
         .next()
         .ok_or_else(|| Error::new(ErrorKind::Other, "Input has no content"))?;
 

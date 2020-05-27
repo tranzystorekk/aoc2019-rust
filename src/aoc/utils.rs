@@ -1,12 +1,11 @@
-use std::io::{BufRead, Error, ErrorKind};
+use std::io::{Error, ErrorKind};
 
 pub use aoc_utils::BufferedInput;
 
 pub fn parse_intcode_program(description: &str) -> std::io::Result<Vec<i64>> {
     let input = BufferedInput::parse_args(description)?;
     let line = input
-        .lines()
-        .map(Result::unwrap)
+        .unwrapped_lines()
         .next()
         .ok_or_else(|| Error::new(ErrorKind::Other, "Input has no content"))?;
 

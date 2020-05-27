@@ -1,11 +1,10 @@
 use aoc::utils::BufferedInput;
-use std::io::BufRead;
 
 use itertools::iterate;
 
 fn parse_input() -> std::io::Result<Vec<i32>> {
     let input = BufferedInput::parse_args("Day 1: The Tyranny of the Rocket Equation - Part 2")?;
-    let lines = input.lines().map(Result::unwrap);
+    let lines = input.unwrapped_lines();
 
     let parsed = lines
         .map(|line| line.parse().expect("Failed to parse module weights"))
