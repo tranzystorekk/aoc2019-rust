@@ -63,8 +63,31 @@ impl Args {
         }
     }
 
-    pub fn is_zero(&self) -> bool {
-        matches!(self, Args::Zero)
+    pub fn expect_zero(&self, msg: &'static str) {
+        if !matches!(self, Args::Zero) {
+            panic!(msg);
+        }
+    }
+
+    pub fn expect_one(self, msg: &'static str) -> Arg {
+        match self {
+            Args::One(arg) => arg,
+            _ => panic!(msg),
+        }
+    }
+
+    pub fn expect_two(self, msg: &'static str) -> (Arg, Arg) {
+        match self {
+            Args::Two(a, b) => (a, b),
+            _ => panic!(msg),
+        }
+    }
+
+    pub fn expect_three(self, msg: &'static str) -> (Arg, Arg, Arg) {
+        match self {
+            Args::Three(a, b, c) => (a, b, c),
+            _ => panic!(msg),
+        }
     }
 }
 
@@ -173,86 +196,68 @@ impl<'a, T: IoProvider> Machine<'a, T> {
     }
 
     fn terminate(&mut self, args: Args) {
-        if !args.is_zero() {
-            panic!("Error: terminate received non-empty arguments");
-        }
+        args.expect_zero("Error: terminate received non-empty arguments");
 
         self.running = false;
         self.halted = true;
     }
 
     fn arithmetic_operation<F: FnOnce(i64, i64) -> i64>(&mut self, args: Args, op: F) {
-        if let Args::Three(arg_a, arg_b, arg_dest) = args {
-            let a = self.get_value_from_arg(arg_a);
-            let b = self.get_value_from_arg(arg_b);
-            let dest_addr = self.get_address_from_arg(arg_dest);
+        let (arg_a, arg_b, arg_dest) =
+            args.expect_three("Error: invalid arguments for comparison operation");
+        let a = self.get_value_from_arg(arg_a);
+        let b = self.get_value_from_arg(arg_b);
+        let dest_addr = self.get_address_from_arg(arg_dest);
 
-            let result = op(a, b);
-            self.try_write_or_resize(dest_addr, result);
-        } else {
-            panic!("Error: invalid arguments for arithmetic operation");
-        }
+        let result = op(a, b);
+        self.try_write_or_resize(dest_addr, result);
     }
 
     fn compare_operation<F: FnOnce(&i64, &i64) -> bool>(&mut self, args: Args, op: F) {
-        if let Args::Three(arg_a, arg_b, arg_dest) = args {
-            let ref a = self.get_value_from_arg(arg_a);
-            let ref b = self.get_value_from_arg(arg_b);
-            let dest_addr = self.get_address_from_arg(arg_dest);
+        let (arg_a, arg_b, arg_dest) =
+            args.expect_three("Error: invalid arguments for comparison operation");
+        let ref a = self.get_value_from_arg(arg_a);
+        let ref b = self.get_value_from_arg(arg_b);
+        let dest_addr = self.get_address_from_arg(arg_dest);
 
-            let result = if op(a, b) { 1 } else { 0 };
-            self.try_write_or_resize(dest_addr, result);
-        } else {
-            panic!("Error: invalid arguments for comparison operation");
-        }
+        let result = if op(a, b) { 1 } else { 0 };
+        self.try_write_or_resize(dest_addr, result);
     }
 
     fn jump_operation<F: FnOnce(i64) -> bool>(&mut self, args: Args, op: F) {
-        if let Args::Two(arg_cond, arg_addr) = args {
-            let cond = self.get_value_from_arg(arg_cond);
-            let addr = self.get_value_from_arg(arg_addr) as usize;
+        let (arg_cond, arg_addr) = args.expect_two("Error: invalid arguments for jump operation");
+        let cond = self.get_value_from_arg(arg_cond);
+        let addr = self.get_value_from_arg(arg_addr) as usize;
 
-            if op(cond) {
-                self.jump_flag = Some(addr);
-            }
-        } else {
-            panic!("Error: invalid arguments for jump operation");
+        if op(cond) {
+            self.jump_flag = Some(addr);
         }
     }
 
     fn relative_base_operation(&mut self, args: Args) {
-        if let Args::One(arg_offset) = args {
-            let offset = self.get_value_from_arg(arg_offset);
+        let arg_offset = args.expect_one("Error: invalid arguments for relative base operation");
+        let offset = self.get_value_from_arg(arg_offset);
 
-            self.relative_base += offset;
-        } else {
-            panic!("Error: invalid arguments for relative base operation");
-        }
+        self.relative_base += offset;
     }
 
     fn input_operation(&mut self, args: Args) {
-        if let Args::One(arg_addr) = args {
-            let addr = self.get_address_from_arg(arg_addr);
+        let arg_addr = args.expect_one("Error: invalid arguments for input operation");
+        let addr = self.get_address_from_arg(arg_addr);
 
-            let input_value = self.io_provider.send_input();
-            self.try_write_or_resize(addr, input_value);
-        } else {
-            panic!("Error: invalid arguments for input operation");
-        }
+        let input_value = self.io_provider.send_input();
+        self.try_write_or_resize(addr, input_value);
     }
 
     fn output_operation(&mut self, args: Args) {
-        if let Args::One(arg_value) = args {
-            let output_value = self.get_value_from_arg(arg_value);
+        let arg_value = args.expect_one("Error: invalid arguments for output operation");
+        let output_value = self.get_value_from_arg(arg_value);
 
-            self.io_provider.get_output(output_value);
-            self.last_output = Some(output_value);
+        self.io_provider.get_output(output_value);
+        self.last_output = Some(output_value);
 
-            if self.interrupt_on_output {
-                self.output_interrupted_flag = true;
-            }
-        } else {
-            panic!("Error: invalid arguments for output operation");
+        if self.interrupt_on_output {
+            self.output_interrupted_flag = true;
         }
     }
 
