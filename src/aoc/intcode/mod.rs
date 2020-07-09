@@ -302,9 +302,7 @@ impl<'a, T: IoProvider> Machine<'a, T> {
         }
     }
 
-    fn get_value_from_arg(&mut self, arg: Arg) -> i64 {
-        let (mode, v) = arg;
-
+    fn get_value_from_arg(&mut self, (mode, v): Arg) -> i64 {
         match mode {
             AddressMode::Position => self.try_read_or_resize(v as usize),
             AddressMode::Immediate => v,
@@ -316,9 +314,7 @@ impl<'a, T: IoProvider> Machine<'a, T> {
         }
     }
 
-    fn get_address_from_arg(&self, arg: Arg) -> usize {
-        let (mode, v) = arg;
-
+    fn get_address_from_arg(&self, (mode, v): Arg) -> usize {
         match mode {
             AddressMode::Position => v as usize,
             AddressMode::Relative => (self.relative_base + v) as usize,
