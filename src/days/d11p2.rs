@@ -6,6 +6,9 @@ use itertools::MinMaxResult::MinMax;
 use aoc::intcode::{IoProvider, Machine};
 use aoc::utils::parse_intcode_program;
 
+#[macro_use]
+extern crate maplit;
+
 #[derive(Clone, Copy)]
 enum Color {
     Black,
@@ -116,7 +119,7 @@ struct PainterBot {
 impl PainterBot {
     pub fn new() -> Self {
         PainterBot {
-            grid: [((0, 0), Color::White)].iter().cloned().collect(),
+            grid: hashmap! { (0, 0) => Color::White },
             walker: Walker::new(),
             state: InstructionState::AwaitingColor,
         }
@@ -127,9 +130,9 @@ impl PainterBot {
     }
 
     fn current_color(&self) -> Color {
-        let pos = self.walker.position();
+        let ref pos = self.walker.position();
 
-        self.grid.get(&pos).copied().unwrap_or(Color::Black)
+        self.grid.get(pos).copied().unwrap_or(Color::Black)
     }
 
     fn read_instruction(&mut self, instr: i64) {
@@ -137,7 +140,7 @@ impl PainterBot {
             InstructionState::AwaitingColor => {
                 let pos = self.walker.position();
 
-                *self.grid.entry(pos).or_insert(Color::Black) = Color::from_value(instr);
+                self.grid.insert(pos, Color::from_value(instr));
             }
             InstructionState::AwaitingTurn => {
                 match instr {
