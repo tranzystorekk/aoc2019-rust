@@ -4,14 +4,13 @@ use aoc::intcode::{IoProvider, Machine};
 use aoc::utils::parse_intcode_program;
 
 struct Input {
-    it: Box<dyn Iterator<Item = i64>>,
+    it: std::vec::IntoIter<i64>,
 }
 
 impl Input {
     pub fn with_params(phase: i64, input: i64) -> Self {
-        let seq = vec![phase, input];
         Input {
-            it: Box::new(seq.into_iter()),
+            it: vec![phase, input].into_iter(),
         }
     }
 }
