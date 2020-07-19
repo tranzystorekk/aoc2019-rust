@@ -13,12 +13,12 @@ fn parse_input() -> std::io::Result<Vec<i32>> {
     Ok(parsed)
 }
 
-fn fuel_req(weight: i32) -> i32 {
+fn fuel_req(weight: &i32) -> i32 {
     weight / 3 - 2
 }
 
 fn fuel_req_chained(weight: i32) -> i32 {
-    let chain = iterate(fuel_req(weight), |&val| fuel_req(val));
+    let chain = iterate(fuel_req(&weight), fuel_req);
 
     chain.take_while(|&req| req > 0).sum()
 }
