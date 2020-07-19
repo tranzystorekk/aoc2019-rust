@@ -193,10 +193,10 @@ fn main() -> std::io::Result<()> {
         _ => panic!("Incorrect picture"),
     };
 
-    let picture = (min_y..max_y + 1)
+    let picture = (min_y..=max_y)
         .rev()
         .map(|y| {
-            (min_x..max_x + 1)
+            (min_x..=max_x)
                 .map(|x| {
                     if white_tiles.contains(&(x, y)) {
                         '#'
