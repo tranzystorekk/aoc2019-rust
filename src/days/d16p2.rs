@@ -44,7 +44,7 @@ fn main() -> std::io::Result<()> {
 
     let real_data: Vec<i32> = std::iter::repeat(received_data)
         .take(10000)
-        .flat_map(|data| data.into_iter())
+        .flatten()
         .skip(message_offset)
         .collect();
 
