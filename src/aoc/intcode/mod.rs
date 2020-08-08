@@ -220,7 +220,7 @@ impl<'a, T: IoProvider> Machine<'a, T> {
         let ref b = self.get_value_from_arg(arg_b);
         let dest_addr = self.get_address_from_arg(arg_dest);
 
-        let result = if op(a, b) { 1 } else { 0 };
+        let result = op(a, b) as i64;
         self.try_write_or_resize(dest_addr, result);
     }
 
