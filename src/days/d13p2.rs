@@ -54,7 +54,7 @@ impl Arcade {
 
 impl IoProvider for Arcade {
     fn send_input(&mut self) -> i64 {
-        match self.paddle_x.cmp(&self.ball_x) {
+        match Ord::cmp(&self.paddle_x, &self.ball_x) {
             Ordering::Greater => -1,
             Ordering::Less => 1,
             Ordering::Equal => 0,
