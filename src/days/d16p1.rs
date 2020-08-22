@@ -32,7 +32,7 @@ fn compute_phase(data: &Vec<i32>) -> Vec<i32> {
         .map(|pos| {
             let pattern = get_pattern(pos);
 
-            let summed: i32 = data.into_iter().zip(pattern).map(|(v, pat)| v * pat).sum();
+            let summed: i32 = data.iter().zip(pattern).map(|(v, pat)| v * pat).sum();
 
             summed.abs() % 10
         })

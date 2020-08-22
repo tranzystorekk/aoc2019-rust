@@ -5,7 +5,7 @@ use aoc::utils::parse_intcode_program;
 
 fn main() -> std::io::Result<()> {
     let program = parse_intcode_program("Day 2: 1202 Program Alarm - Part 2")?;
-    let ref mut io = ValueProvider::new(0);
+    let io = &mut ValueProvider::new(0);
 
     for (noun, verb) in (0..100).cartesian_product(0..100) {
         let mut machine = Machine::new(program.clone(), io);

@@ -130,7 +130,7 @@ impl PainterBot {
     }
 
     fn current_color(&self) -> Color {
-        let ref pos = self.walker.position();
+        let pos = &self.walker.position();
 
         self.grid.get(pos).copied().unwrap_or(Color::Black)
     }
@@ -170,7 +170,7 @@ impl IoProvider for PainterBot {
 fn main() -> std::io::Result<()> {
     let program = parse_intcode_program("Day 11: Space Police - Part 2")?;
 
-    let ref mut bot = PainterBot::new();
+    let bot = &mut PainterBot::new();
     let mut cpu = Machine::new(program, bot);
     cpu.run();
 

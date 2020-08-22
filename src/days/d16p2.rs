@@ -20,7 +20,7 @@ fn parse_input() -> std::io::Result<(String, Vec<i32>)> {
 
 fn compute_phase(data: &Vec<i32>) -> Vec<i32> {
     let mut transformed: Vec<i32> = data
-        .into_iter()
+        .iter()
         .rev()
         .scan(0, |sum, val| {
             *sum += val;

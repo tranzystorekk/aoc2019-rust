@@ -25,7 +25,7 @@ fn run_series(phases: Vec<i64>, prog: &Vec<i64>) -> i64 {
     let mut current_value = 0;
 
     for phase in phases {
-        let ref mut inp = Input::with_params(phase, current_value);
+        let inp = &mut Input::with_params(phase, current_value);
         let mut cpu = Machine::new(prog.clone(), inp);
         cpu.run();
 
@@ -36,7 +36,7 @@ fn run_series(phases: Vec<i64>, prog: &Vec<i64>) -> i64 {
 }
 
 fn main() -> std::io::Result<()> {
-    let ref program = parse_intcode_program("Day 7: Amplification Circuit - Part 1")?;
+    let program = &(parse_intcode_program("Day 7: Amplification Circuit - Part 1")?);
 
     let result = (0..5)
         .permutations(5)

@@ -43,7 +43,7 @@ impl IoProvider for Link {
 }
 
 fn run_feedback_loop(phases: Vec<i64>, prog: &Vec<i64>) -> i64 {
-    let mut links: Vec<Link> = phases.into_iter().map(|ph| Link::with_phase(ph)).collect();
+    let mut links: Vec<Link> = phases.into_iter().map(Link::with_phase).collect();
     let mut cpus: Vec<_> = links
         .iter_mut()
         .map(|link| {
@@ -67,7 +67,7 @@ fn run_feedback_loop(phases: Vec<i64>, prog: &Vec<i64>) -> i64 {
 }
 
 fn main() -> std::io::Result<()> {
-    let ref program = parse_intcode_program("Day 7: Amplification Circuit - Part 2")?;
+    let program = &(parse_intcode_program("Day 7: Amplification Circuit - Part 2")?);
 
     let result = (5..10)
         .permutations(5)

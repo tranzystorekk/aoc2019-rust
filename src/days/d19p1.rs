@@ -37,7 +37,7 @@ fn main() -> std::io::Result<()> {
 
     let result: i64 = iproduct!(0..50, 0..50)
         .map(|pos| {
-            let ref mut checker = PosChecker::from_pos(pos);
+            let checker = &mut PosChecker::from_pos(pos);
             let mut cpu = Machine::new(program.clone(), checker);
 
             cpu.run();

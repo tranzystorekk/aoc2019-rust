@@ -3,9 +3,9 @@ use aoc::utils::parse_intcode_program;
 use std::cmp::Ordering;
 
 enum InstructionState {
-    AwaitingX,
-    AwaitingY,
-    AwaitingId,
+    X,
+    Y,
+    Id,
 }
 
 struct Arcade {
@@ -20,9 +20,9 @@ struct Arcade {
 impl InstructionState {
     pub fn advance(&mut self) {
         *self = match self {
-            InstructionState::AwaitingX => InstructionState::AwaitingY,
-            InstructionState::AwaitingY => InstructionState::AwaitingId,
-            InstructionState::AwaitingId => InstructionState::AwaitingX,
+            InstructionState::X => InstructionState::Y,
+            InstructionState::Y => InstructionState::Id,
+            InstructionState::Id => InstructionState::X,
         };
     }
 }
@@ -35,7 +35,7 @@ impl Arcade {
             paddle_x: 0,
             ball_x: 0,
             score: 0,
-            state: InstructionState::AwaitingX,
+            state: InstructionState::X,
         }
     }
 
@@ -63,9 +63,9 @@ impl IoProvider for Arcade {
 
     fn get_output(&mut self, value: i64) {
         match self.state {
-            InstructionState::AwaitingX => self.current_x = value,
-            InstructionState::AwaitingY => self.current_y = value,
-            InstructionState::AwaitingId => match (self.current_x, self.current_y) {
+            InstructionState::X => self.current_x = value,
+            InstructionState::Y => self.current_y = value,
+            InstructionState::Id => match (self.current_x, self.current_y) {
                 (-1, 0) => self.score = value,
                 (x, _) => self.process_tile(x, value),
             },
@@ -78,7 +78,7 @@ impl IoProvider for Arcade {
 fn main() -> std::io::Result<()> {
     let program = parse_intcode_program("Day 13: Care Package - Part 2")?;
 
-    let ref mut arcade = Arcade::new();
+    let arcade = &mut Arcade::new();
     let mut cpu = Machine::new(program, arcade);
     cpu.write(0, 2);
     cpu.run();

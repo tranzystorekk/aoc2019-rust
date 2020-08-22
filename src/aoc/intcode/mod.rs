@@ -216,8 +216,8 @@ impl<'a, T: IoProvider> Machine<'a, T> {
     fn compare_operation<F: FnOnce(&i64, &i64) -> bool>(&mut self, args: Args, op: F) {
         let (arg_a, arg_b, arg_dest) =
             args.expect_three("Error: invalid arguments for comparison operation");
-        let ref a = self.get_value_from_arg(arg_a);
-        let ref b = self.get_value_from_arg(arg_b);
+        let a = &self.get_value_from_arg(arg_a);
+        let b = &self.get_value_from_arg(arg_b);
         let dest_addr = self.get_address_from_arg(arg_dest);
 
         let result = op(a, b) as i64;
