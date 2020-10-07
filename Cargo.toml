@@ -90,3 +90,7 @@ path = "src/days/d19p1.rs"
 aoc-utils = "0.2.1"
 itertools = "0.9.0"
 maplit = "1.0.2"
+
+[dev-dependencies]
+assert_cmd = "1.0.1"
+predicates = "1.0.5"
