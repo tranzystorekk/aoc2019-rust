@@ -1,6 +1,6 @@
 mod io;
 
-use itertools::Itertools;
+use itertools::{izip, Itertools};
 use std::cmp::{PartialEq, PartialOrd};
 use std::ops::{Add, Mul};
 
@@ -279,22 +279,21 @@ impl<'a, T: IoProvider> Machine<'a, T> {
     fn get_args(&self, n_args: usize, modes: i64) -> Args {
         let arg_begin = self.program_counter + 1;
         let arg_end = self.program_counter + n_args + 1;
-        let args = get_modes(modes).zip(self.memory[arg_begin..arg_end].iter().copied());
+        let modes = get_modes(modes);
+        let mem_slice = self.memory[arg_begin..arg_end].iter().copied();
+        let args = izip!(modes, mem_slice);
 
         match n_args {
             3 => {
                 let (a, b, c) = args.collect_tuple().unwrap();
-
                 Args::Three(a, b, c)
             }
             2 => {
                 let (a, b) = args.collect_tuple().unwrap();
-
                 Args::Two(a, b)
             }
             1 => {
                 let (a,) = args.collect_tuple().unwrap();
-
                 Args::One(a)
             }
             0 => Args::Zero,
