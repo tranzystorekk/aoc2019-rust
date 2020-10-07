@@ -93,4 +93,3 @@ maplit = "1.0.2"
 
 [dev-dependencies]
 assert_cmd = "1.0.1"
-predicates = "1.0.5"
