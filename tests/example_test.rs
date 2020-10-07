@@ -29,3 +29,17 @@ fn day_one_part_two() {
         output == expected
     }));
 }
+
+#[test]
+fn day_two_part_one() {
+    let input = "1,1,1,4,99,5,6,0,99";
+    let expected = 30;
+
+    let mut command = Command::cargo_bin("d02p1").unwrap();
+    let assert = command.write_stdin(input).assert();
+
+    assert.success().stdout(predicate::function(|out| {
+        let output: i32 = String::from_utf8_lossy(out).trim().parse().unwrap();
+        output == expected
+    }));
+}
