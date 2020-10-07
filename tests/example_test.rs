@@ -35,3 +35,26 @@ fn day_two_part_one() {
 
     assert.success().stdout(expected_str);
 }
+
+#[test]
+fn day_seven_part_one() {
+    let input = "3,15,3,16,1002,16,10,16,1,16,15,15,4,15,99,0,0";
+    let expected_str = "43210\n";
+
+    let mut command = Command::cargo_bin("d07p1").unwrap();
+    let assert = command.write_stdin(input).assert();
+
+    assert.success().stdout(expected_str);
+}
+
+#[test]
+fn day_seven_part_two() {
+    let input =
+        "3,26,1001,26,-4,26,3,27,1002,27,2,27,1,27,26,27,4,27,1001,28,-1,28,1005,28,6,99,0,0,5";
+    let expected_str = "139629729\n";
+
+    let mut command = Command::cargo_bin("d07p2").unwrap();
+    let assert = command.write_stdin(input).assert();
+
+    assert.success().stdout(expected_str);
+}
