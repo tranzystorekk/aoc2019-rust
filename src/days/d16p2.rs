@@ -42,8 +42,7 @@ fn main() -> std::io::Result<()> {
     let (line, received_data) = parse_input()?;
     let message_offset: usize = line[..7].parse().unwrap();
 
-    let real_data: Vec<i32> = std::iter::repeat(received_data)
-        .take(10000)
+    let real_data: Vec<i32> = itertools::repeat_n(received_data, 10000)
         .flatten()
         .skip(message_offset)
         .collect();
