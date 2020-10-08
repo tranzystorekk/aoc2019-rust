@@ -21,13 +21,11 @@ pub struct Machine<'a, T> {
 }
 
 #[derive(Copy, Clone)]
-enum AddressMode {
-    Position,
-    Immediate,
-    Relative,
+enum Arg {
+    Position(i64),
+    Immediate(i64),
+    Relative(i64),
 }
-
-type Arg = (AddressMode, i64);
 
 #[derive(Copy, Clone)]
 enum Args {
@@ -37,20 +35,24 @@ enum Args {
     Three(Arg, Arg, Arg),
 }
 
-fn get_modes(mode_num: i64) -> impl Iterator<Item = AddressMode> {
+fn get_modes(mode_num: i64) -> impl Iterator<Item = i64> {
     itertools::unfold(mode_num, |state| {
         let current = *state % 10;
         *state /= 10;
 
-        let result = match current {
-            0 => AddressMode::Position,
-            1 => AddressMode::Immediate,
-            2 => AddressMode::Relative,
-            _ => panic!("Error when parsing mode: unrecognized address mode"),
-        };
-
-        Some(result)
+        Some(current)
     })
+}
+
+impl Arg {
+    pub fn from_tuple((mode, v): (i64, i64)) -> Self {
+        match mode {
+            0 => Arg::Position(v),
+            1 => Arg::Immediate(v),
+            2 => Arg::Relative(v),
+            _ => panic!("Error when parsing mode: unrecognized address mode"),
+        }
+    }
 }
 
 impl Args {
@@ -281,7 +283,7 @@ impl<'a, T: IoProvider> Machine<'a, T> {
         let arg_end = self.program_counter + n_args + 1;
         let modes = get_modes(modes);
         let mem_slice = self.memory[arg_begin..arg_end].iter().copied();
-        let args = izip!(modes, mem_slice);
+        let args = izip!(modes, mem_slice).map(Arg::from_tuple);
 
         match n_args {
             3 => {
@@ -301,23 +303,22 @@ impl<'a, T: IoProvider> Machine<'a, T> {
         }
     }
 
-    fn get_value_from_arg(&mut self, (mode, v): Arg) -> i64 {
-        match mode {
-            AddressMode::Position => self.try_read_or_resize(v as usize),
-            AddressMode::Immediate => v,
-            AddressMode::Relative => {
+    fn get_value_from_arg(&mut self, arg: Arg) -> i64 {
+        match arg {
+            Arg::Position(v) => self.try_read_or_resize(v as usize),
+            Arg::Immediate(v) => v,
+            Arg::Relative(v) => {
                 let relative_address = self.relative_base + v;
-
                 self.try_read_or_resize(relative_address as usize)
             }
         }
     }
 
-    fn get_address_from_arg(&self, (mode, v): Arg) -> usize {
-        match mode {
-            AddressMode::Position => v as usize,
-            AddressMode::Relative => (self.relative_base + v) as usize,
-            AddressMode::Immediate => panic!("Error: write access at an address in immediate mode"),
+    fn get_address_from_arg(&self, arg: Arg) -> usize {
+        match arg {
+            Arg::Position(v) => v as usize,
+            Arg::Relative(v) => (self.relative_base + v) as usize,
+            Arg::Immediate(_) => panic!("Error: write access at an address in immediate mode"),
         }
     }
 
