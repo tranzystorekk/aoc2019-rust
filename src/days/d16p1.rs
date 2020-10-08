@@ -22,7 +22,7 @@ fn get_pattern(position: usize) -> impl Iterator<Item = i32> {
     let base = vec![0, 1, 0, -1];
 
     base.into_iter()
-        .flat_map(move |v| std::iter::repeat(v).take(position))
+        .flat_map(move |v| itertools::repeat_n(v, position))
         .cycle()
         .skip(1)
 }
