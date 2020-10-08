@@ -230,7 +230,7 @@ impl<'a, T: IoProvider> Machine<'a, T> {
         let addr = self.get_value_from_arg(arg_addr) as usize;
 
         if op(cond) {
-            self.jump_flag = Some(addr);
+            self.jump_flag.replace(addr);
         }
     }
 
