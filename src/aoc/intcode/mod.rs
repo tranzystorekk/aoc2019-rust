@@ -21,6 +21,20 @@ pub struct Machine<'a, T> {
 }
 
 #[derive(Copy, Clone)]
+enum Op {
+    Add,
+    Mul,
+    Inp,
+    Out,
+    Jnz,
+    Jez,
+    Tlt,
+    Teq,
+    Rel,
+    Hlt,
+}
+
+#[derive(Copy, Clone)]
 enum Arg {
     Position(i64),
     Immediate(i64),
@@ -42,6 +56,33 @@ fn get_modes(mode_num: i64) -> impl Iterator<Item = i64> {
 
         Some(current)
     })
+}
+
+impl Op {
+    pub fn from_code(code: i64) -> Self {
+        match code {
+            1 => Op::Add,
+            2 => Op::Mul,
+            3 => Op::Inp,
+            4 => Op::Out,
+            5 => Op::Jnz,
+            6 => Op::Jez,
+            7 => Op::Tlt,
+            8 => Op::Teq,
+            9 => Op::Rel,
+            99 => Op::Hlt,
+            _ => panic!("Error when parsing opcode: unrecognized opcode"),
+        }
+    }
+
+    pub fn expected_n_args(&self) -> usize {
+        match self {
+            Op::Add | Op::Mul | Op::Tlt | Op::Teq => 3,
+            Op::Jnz | Op::Jez => 2,
+            Op::Inp | Op::Out | Op::Rel => 1,
+            Op::Hlt => 0,
+        }
+    }
 }
 
 impl Arg {
@@ -181,19 +222,18 @@ impl<'a, T: IoProvider> Machine<'a, T> {
         }
     }
 
-    fn exec(&mut self, opcode: i64, args: Args) {
+    fn exec(&mut self, opcode: Op, args: Args) {
         match opcode {
-            1 => self.arithmetic_operation(args, Add::add),
-            2 => self.arithmetic_operation(args, Mul::mul),
-            3 => self.input_operation(args),
-            4 => self.output_operation(args),
-            5 => self.jump_operation(args, |v| v != 0),
-            6 => self.jump_operation(args, |v| v == 0),
-            7 => self.compare_operation(args, PartialOrd::lt),
-            8 => self.compare_operation(args, PartialEq::eq),
-            9 => self.relative_base_operation(args),
-            99 => self.terminate(args),
-            _ => panic!("Error during execution: unrecognized opcode"),
+            Op::Add => self.arithmetic_operation(args, Add::add),
+            Op::Mul => self.arithmetic_operation(args, Mul::mul),
+            Op::Inp => self.input_operation(args),
+            Op::Out => self.output_operation(args),
+            Op::Jnz => self.jump_operation(args, |v| v != 0),
+            Op::Jez => self.jump_operation(args, |v| v == 0),
+            Op::Tlt => self.compare_operation(args, PartialOrd::lt),
+            Op::Teq => self.compare_operation(args, PartialEq::eq),
+            Op::Rel => self.relative_base_operation(args),
+            Op::Hlt => self.terminate(args),
         };
     }
 
@@ -263,19 +303,14 @@ impl<'a, T: IoProvider> Machine<'a, T> {
         }
     }
 
-    fn parse_instruction(&self) -> (i64, Args) {
+    fn parse_instruction(&self) -> (Op, Args) {
         let opcode_unparsed = self.memory[self.program_counter];
-        let op = opcode_unparsed % 100;
+        let code = opcode_unparsed % 100;
 
-        let n_args = match op {
-            1 | 2 | 7 | 8 => 3,
-            5 | 6 => 2,
-            3 | 4 | 9 => 1,
-            99 => 0,
-            _ => panic!("Error when parsing instruction: unrecognized opcode"),
-        };
-
-        (op, self.get_args(n_args, opcode_unparsed / 100))
+        let operation = Op::from_code(code);
+        let n_args = operation.expected_n_args();
+        let args = self.get_args(n_args, opcode_unparsed / 100);
+        (operation, args)
     }
 
     fn get_args(&self, n_args: usize, modes: i64) -> Args {
