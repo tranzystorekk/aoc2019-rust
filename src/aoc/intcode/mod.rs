@@ -323,25 +323,21 @@ impl<'a, T: IoProvider> Machine<'a, T> {
     }
 
     fn try_read_or_resize(&mut self, position: usize) -> i64 {
-        let current_len = self.memory.len();
-        if position >= current_len {
-            let extension_size = position - current_len + 1;
-
-            self.extend_by(extension_size);
-        }
-
+        self.resize_if_needed(position);
         self.memory[position]
     }
 
     fn try_write_or_resize(&mut self, position: usize, value: i64) {
+        self.resize_if_needed(position);
+        self.memory[position] = value;
+    }
+
+    fn resize_if_needed(&mut self, position: usize) {
         let current_len = self.memory.len();
         if position >= current_len {
             let extension_size = position - current_len + 1;
-
             self.extend_by(extension_size);
         }
-
-        self.memory[position] = value;
     }
 
     fn extend_by(&mut self, number: usize) {
