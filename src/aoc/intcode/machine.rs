@@ -1,10 +1,8 @@
-mod io;
-
 use itertools::{izip, Itertools};
 use std::cmp::{PartialEq, PartialOrd};
 use std::ops::{Add, Mul};
 
-pub use io::{IoProvider, ValueProvider};
+use super::io::IoProvider;
 
 #[derive(Debug)]
 pub struct Machine<'a, T> {
