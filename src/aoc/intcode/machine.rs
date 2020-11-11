@@ -12,10 +12,10 @@ pub struct Machine<'a, T> {
     jump_flag: Option<usize>,
     halted: bool,
     running: bool,
-    interrupt_on_output: bool,
     output_interrupted_flag: bool,
     last_output: Option<i64>,
     io_provider: &'a mut T,
+    pub interrupt_on_output: bool,
 }
 
 #[derive(Copy, Clone)]
@@ -149,10 +149,6 @@ impl<T> Machine<'_, T> {
         self.last_output
     }
 
-    pub fn set_interrupt_on_output(&mut self, switch: bool) {
-        self.interrupt_on_output = switch;
-    }
-
     pub fn is_halted(&self) -> bool {
         self.halted
     }
@@ -175,10 +171,10 @@ impl<'a, T: IoProvider> Machine<'a, T> {
             jump_flag: None,
             halted: false,
             running: false,
-            interrupt_on_output: false,
             output_interrupted_flag: false,
             last_output: None,
             io_provider,
+            interrupt_on_output: false,
         }
     }
 

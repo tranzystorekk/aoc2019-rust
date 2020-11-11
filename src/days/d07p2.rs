@@ -48,7 +48,7 @@ fn run_feedback_loop(phases: Vec<i64>, prog: &[i64]) -> i64 {
         .iter_mut()
         .map(|link| {
             let mut m = Machine::new(prog.into(), link);
-            m.set_interrupt_on_output(true);
+            m.interrupt_on_output = true;
 
             m
         })
