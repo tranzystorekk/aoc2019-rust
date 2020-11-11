@@ -1,6 +1,6 @@
 use itertools::{izip, Itertools};
 use std::cmp::{PartialEq, PartialOrd};
-use std::ops::{Add, Mul};
+use std::ops::{Add as Addition, Mul as Multiply};
 
 use super::io::IoProvider;
 
@@ -58,27 +58,31 @@ fn get_modes(mode_num: i64) -> impl Iterator<Item = i64> {
 
 impl Op {
     pub fn from_code(code: i64) -> Self {
+        use Op::*;
+
         match code {
-            1 => Op::Add,
-            2 => Op::Mul,
-            3 => Op::Inp,
-            4 => Op::Out,
-            5 => Op::Jnz,
-            6 => Op::Jez,
-            7 => Op::Tlt,
-            8 => Op::Teq,
-            9 => Op::Rel,
-            99 => Op::Hlt,
+            1 => Add,
+            2 => Mul,
+            3 => Inp,
+            4 => Out,
+            5 => Jnz,
+            6 => Jez,
+            7 => Tlt,
+            8 => Teq,
+            9 => Rel,
+            99 => Hlt,
             _ => panic!("Error when parsing opcode: unrecognized opcode"),
         }
     }
 
     pub fn expected_n_args(&self) -> usize {
+        use Op::*;
+
         match self {
-            Op::Add | Op::Mul | Op::Tlt | Op::Teq => 3,
-            Op::Jnz | Op::Jez => 2,
-            Op::Inp | Op::Out | Op::Rel => 1,
-            Op::Hlt => 0,
+            Add | Mul | Tlt | Teq => 3,
+            Jnz | Jez => 2,
+            Inp | Out | Rel => 1,
+            Hlt => 0,
         }
     }
 }
@@ -221,17 +225,19 @@ impl<'a, T: IoProvider> Machine<'a, T> {
     }
 
     fn exec(&mut self, opcode: Op, args: Args) {
+        use Op::*;
+
         match opcode {
-            Op::Add => self.arithmetic_operation(args, Add::add),
-            Op::Mul => self.arithmetic_operation(args, Mul::mul),
-            Op::Inp => self.input_operation(args),
-            Op::Out => self.output_operation(args),
-            Op::Jnz => self.jump_operation(args, |v| v != 0),
-            Op::Jez => self.jump_operation(args, |v| v == 0),
-            Op::Tlt => self.compare_operation(args, PartialOrd::lt),
-            Op::Teq => self.compare_operation(args, PartialEq::eq),
-            Op::Rel => self.relative_base_operation(args),
-            Op::Hlt => self.terminate(args),
+            Add => self.arithmetic_operation(args, Addition::add),
+            Mul => self.arithmetic_operation(args, Multiply::mul),
+            Inp => self.input_operation(args),
+            Out => self.output_operation(args),
+            Jnz => self.jump_operation(args, |v| v != 0),
+            Jez => self.jump_operation(args, |v| v == 0),
+            Tlt => self.compare_operation(args, PartialOrd::lt),
+            Teq => self.compare_operation(args, PartialEq::eq),
+            Rel => self.relative_base_operation(args),
+            Hlt => self.terminate(args),
         };
     }
 
