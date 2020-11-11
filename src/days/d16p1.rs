@@ -27,7 +27,7 @@ fn get_pattern(position: usize) -> impl Iterator<Item = i32> {
         .skip(1)
 }
 
-fn compute_phase(data: &Vec<i32>) -> Vec<i32> {
+fn compute_phase(data: &[i32]) -> Vec<i32> {
     (1..data.len() + 1)
         .map(|pos| {
             let pattern = get_pattern(pos);
@@ -40,7 +40,7 @@ fn compute_phase(data: &Vec<i32>) -> Vec<i32> {
 }
 
 fn run_phases(initial: Vec<i32>, n: usize) -> Vec<i32> {
-    iterate(initial, compute_phase).nth(n).unwrap()
+    iterate(initial, |d| compute_phase(d)).nth(n).unwrap()
 }
 
 fn main() -> std::io::Result<()> {

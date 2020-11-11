@@ -18,7 +18,7 @@ fn parse_input() -> std::io::Result<(String, Vec<i32>)> {
     Ok((line, result))
 }
 
-fn compute_phase(data: &Vec<i32>) -> Vec<i32> {
+fn compute_phase(data: &[i32]) -> Vec<i32> {
     let mut transformed: Vec<i32> = data
         .iter()
         .rev()
@@ -35,7 +35,7 @@ fn compute_phase(data: &Vec<i32>) -> Vec<i32> {
 }
 
 fn run_phases(initial: Vec<i32>, n: usize) -> Vec<i32> {
-    iterate(initial, compute_phase).nth(n).unwrap()
+    iterate(initial, |d| compute_phase(d)).nth(n).unwrap()
 }
 
 fn main() -> std::io::Result<()> {

@@ -21,12 +21,12 @@ impl IoProvider for Input {
     }
 }
 
-fn run_series(phases: Vec<i64>, prog: &Vec<i64>) -> i64 {
+fn run_series(phases: Vec<i64>, prog: &[i64]) -> i64 {
     let mut current_value = 0;
 
     for phase in phases {
         let inp = &mut Input::with_params(phase, current_value);
-        let mut cpu = Machine::new(prog.clone(), inp);
+        let mut cpu = Machine::new(prog.into(), inp);
         cpu.run();
 
         current_value = cpu.last_output().unwrap();

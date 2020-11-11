@@ -42,12 +42,12 @@ impl IoProvider for Link {
     }
 }
 
-fn run_feedback_loop(phases: Vec<i64>, prog: &Vec<i64>) -> i64 {
+fn run_feedback_loop(phases: Vec<i64>, prog: &[i64]) -> i64 {
     let mut links: Vec<Link> = phases.into_iter().map(Link::with_phase).collect();
     let mut cpus: Vec<_> = links
         .iter_mut()
         .map(|link| {
-            let mut m = Machine::new(prog.clone(), link);
+            let mut m = Machine::new(prog.into(), link);
             m.set_interrupt_on_output(true);
 
             m
