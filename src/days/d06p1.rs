@@ -16,12 +16,12 @@ fn parse_input() -> std::io::Result<OrbitMap> {
 }
 
 fn calculate_orbit_checksum(orbits: OrbitMap) -> i32 {
-    let mut searchspace: Vec<(String, _)> = vec![("COM".into(), 0)];
+    let mut searchspace = vec![("COM", 0)];
     let mut checksum = 0;
 
     while let Some((center, length)) = searchspace.pop() {
-        if let Some(neighbors) = orbits.get(&center) {
-            let new_searches = neighbors.iter().cloned().map(|body| (body, length + 1));
+        if let Some(neighbors) = orbits.get(center) {
+            let new_searches = neighbors.iter().map(|body| (body.as_str(), length + 1));
             searchspace.extend(new_searches);
         }
 

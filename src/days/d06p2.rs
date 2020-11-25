@@ -15,19 +15,19 @@ fn parse_input() -> std::io::Result<OrbitMap> {
     Ok(result)
 }
 
-fn find_path_to(orbits: &OrbitMap, target: &str) -> Option<Vec<String>> {
-    let mut searchspace: Vec<(String, _)> = vec![("COM".into(), vec![])];
+fn find_path_to<'a>(orbits: &'a OrbitMap, target: &str) -> Option<Vec<&'a str>> {
+    let mut searchspace = vec![("COM", vec![])];
 
     while let Some((center, path)) = searchspace.pop() {
         if center == target {
             return Some(path);
         }
 
-        if let Some(neighbors) = orbits.get(&center) {
-            let new_searches = neighbors.iter().cloned().map(|body| {
+        if let Some(neighbors) = orbits.get(center) {
+            let new_searches = neighbors.iter().map(|body| {
                 let mut new_path = path.clone();
-                new_path.push(center.clone());
-                (body, new_path)
+                new_path.push(center);
+                (body.as_str(), new_path)
             });
             searchspace.extend(new_searches);
         }
