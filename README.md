@@ -2,7 +2,7 @@
 
 ## About
 
-Selected solutions from the original [Python repo](https://github.com/tranzystorek-io/aoc2019),
+Selected solutions from the original [Python repo](https://github.com/tranzystorek-io/aoc2019-python),
 sweetened with some Rust action.
 
 This is mostly my attempt at polishing my Rust skills
