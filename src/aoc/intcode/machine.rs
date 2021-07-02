@@ -110,28 +110,28 @@ impl Args {
 
     pub fn expect_zero(&self, msg: &'static str) {
         if !matches!(self, Args::Zero) {
-            panic!(msg);
+            panic!("{}", msg);
         }
     }
 
     pub fn expect_one(self, msg: &'static str) -> Arg {
         match self {
             Args::One(arg) => arg,
-            _ => panic!(msg),
+            _ => panic!("{}", msg),
         }
     }
 
     pub fn expect_two(self, msg: &'static str) -> (Arg, Arg) {
         match self {
             Args::Two(a, b) => (a, b),
-            _ => panic!(msg),
+            _ => panic!("{}", msg),
         }
     }
 
     pub fn expect_three(self, msg: &'static str) -> (Arg, Arg, Arg) {
         match self {
             Args::Three(a, b, c) => (a, b, c),
-            _ => panic!(msg),
+            _ => panic!("{}", msg),
         }
     }
 }

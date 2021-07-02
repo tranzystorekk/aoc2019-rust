@@ -5,14 +5,14 @@ use aoc::intcode::{IoProvider, Machine};
 use aoc::utils::parse_intcode_program;
 
 struct PosChecker {
-    positions: std::vec::IntoIter<i64>,
+    positions: std::array::IntoIter<i64, 2>,
     result: Option<i64>,
 }
 
 impl PosChecker {
     pub fn from_pos((x, y): (i64, i64)) -> Self {
         Self {
-            positions: vec![x, y].into_iter(),
+            positions: IntoIterator::into_iter([x, y]),
             result: None,
         }
     }
