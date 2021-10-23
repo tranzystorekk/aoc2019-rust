@@ -61,8 +61,7 @@ fn day_seven_part_two() {
 
 #[test]
 fn day_sixteen_part_one() {
-    let input =
-        "80871224585914546619083218645595";
+    let input = "80871224585914546619083218645595";
     let expected_str = "24176176\n";
 
     let mut command = Command::cargo_bin("d16p1").unwrap();
@@ -73,8 +72,7 @@ fn day_sixteen_part_one() {
 
 #[test]
 fn day_sixteen_part_two() {
-    let input =
-        "03036732577212944063491565474664";
+    let input = "03036732577212944063491565474664";
     let expected_str = "84462026\n";
 
     let mut command = Command::cargo_bin("d16p2").unwrap();
