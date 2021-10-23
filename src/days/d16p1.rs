@@ -21,7 +21,7 @@ fn parse_input() -> std::io::Result<Vec<i32>> {
 fn get_pattern(position: usize) -> impl Iterator<Item = i32> {
     let base = [0, 1, 0, -1];
 
-    IntoIterator::into_iter(base)
+    base.into_iter()
         .flat_map(move |v| itertools::repeat_n(v, position))
         .cycle()
         .skip(1)

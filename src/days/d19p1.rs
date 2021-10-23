@@ -12,7 +12,7 @@ struct PosChecker {
 impl PosChecker {
     pub fn from_pos((x, y): (i64, i64)) -> Self {
         Self {
-            positions: IntoIterator::into_iter([x, y]),
+            positions: [x, y].into_iter(),
             result: None,
         }
     }

@@ -10,7 +10,7 @@ struct Input {
 impl Input {
     pub fn with_params(phase: i64, input: i64) -> Self {
         Input {
-            it: IntoIterator::into_iter([phase, input]),
+            it: [phase, input].into_iter(),
         }
     }
 }
